@@ -1,10 +1,10 @@
-# Inherit common CM stuff
-$(call inherit-product, vendor/cm/config/common.mk)
+# Inherit common toxic stuff
+$(call inherit-product, vendor/toxic/config/common.mk)
 
 PRODUCT_SIZE := mini
 
-# Include CM audio files
-include vendor/cm/config/cm_audio.mk
+# Include toxic audio files
+include vendor/toxic/config/toxic_audio.mk
 
 # Default notification/alarm sounds
 PRODUCT_PROPERTY_OVERRIDES += \

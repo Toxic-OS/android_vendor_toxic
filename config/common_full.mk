@@ -1,12 +1,12 @@
-# Inherit common CM stuff
-$(call inherit-product, vendor/cm/config/common.mk)
+# Inherit common TOXIC stuff
+$(call inherit-product, vendor/toxic/config/common.mk)
 
 PRODUCT_SIZE := full
 
-# Include CM audio files
-include vendor/cm/config/cm_audio.mk
+# Include TOXIC audio files
+include vendor/toxic/config/cm_audio.mk
 
-# Optional CM packages
+# Optional TOXIC packages
 PRODUCT_PACKAGES += \
     Galaxy4 \
     HoloSpiralWallpaper \
@@ -20,7 +20,7 @@ PRODUCT_PACKAGES += \
     PhotoPhase \
     Screencast
 
-# Extra tools in CM
+# Extra tools in TOXIC
 PRODUCT_PACKAGES += \
     7z \
     lib7z \
