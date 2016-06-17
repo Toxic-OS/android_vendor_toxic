@@ -8,13 +8,8 @@ include vendor/toxic/config/cm_audio.mk
 
 # Optional TOXIC packages
 PRODUCT_PACKAGES += \
-    Galaxy4 \
-    HoloSpiralWallpaper \
     LiveWallpapers \
     LiveWallpapersPicker \
-    MagicSmokeWallpapers \
-    NoiseField \
-    PhaseBeam \
     PhotoTable \
     SoundRecorder \
     PhotoPhase \
