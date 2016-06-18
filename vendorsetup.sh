@@ -1,4 +1,6 @@
-for combo in $(curl -s https://raw.githubusercontent.com/CyanogenMod/hudson/master/cm-build-targets | sed -e 's/#.*$//' | grep cm-13.0 | awk '{printf "cm_%s-%s\n", $1, $2}')
+for device in $(cat vendor/toxic/toxic-os-build-targets)
 do
-    add_lunch_combo $combo
+    add_lunch_combo toxic_$device-eng
+    add_lunch_combo toxic_$device-user
+    add_lunch_combo toxic_$device-userdebug
 done
