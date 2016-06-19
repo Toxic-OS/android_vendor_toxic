@@ -140,6 +140,7 @@ PRODUCT_PACKAGES += \
     CMUpdater \
     CyanogenSetupWizard \
     CMSettingsProvider \
+    ToxicOTA \
     ExactCalculator \
     LiveLockScreenService \
     WeatherProvider \
