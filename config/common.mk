@@ -186,104 +186,18 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 DEVICE_PACKAGE_OVERLAYS += vendor/toxic/overlay/common
 
-PRODUCT_VERSION_MAJOR = Toxic-OS
-PRODUCT_VERSION_MINOR = Alpha-0.1-MM
-PRODUCT_VERSION_MAINTENANCE = 0-RC0 
-
-# Set TOXIC_BUILDTYPE from the env RELEASE_TYPE, for jenkins compat
-
-ifndef TOXIC_BUILDTYPE
-    ifdef RELEASE_TYPE
-        # Starting with "CM_" is optional
-        RELEASE_TYPE := $(shell echo $(RELEASE_TYPE) | sed -e 's|^TOXIC_||g')
-        TOXIC_BUILDTYPE := $(RELEASE_TYPE)
-    endif
-endif
-
-# Filter out random types, so it'll reset to UNOFFICIAL
-ifeq ($(filter RELEASE NIGHTLY SNAPSHOT EXPERIMENTAL,$(TOXIC_BUILDTYPE)),)
-    TOXIC_BUILDTYPE :=
-endif
-
-ifdef TOXIC_BUILDTYPE
-    ifneq ($(TOXIC_BUILDTYPE), SNAPSHOT)
-        ifdef TOXIC_EXTRAVERSION
-            # Force build type to EXPERIMENTAL
-            TOXIC_BUILDTYPE := EXPERIMENTAL
-            # Remove leading dash from TOXIC_EXTRAVERSION
-            TOXIC_EXTRAVERSION := $(shell echo $(TOXIC_EXTRAVERSION) | sed 's/-//')
-            # Add leading dash to TOXIC_EXTRAVERSION
-            TOXIC_EXTRAVERSION := -$(TOXIC_EXTRAVERSION)
-        endif
-    else
-        ifndef TOXIC_EXTRAVERSION
-            # Force build type to EXPERIMENTAL, SNAPSHOT mandates a tag
-            TOXIC_BUILDTYPE := EXPERIMENTAL
-        else
-            # Remove leading dash from TOXIC_EXTRAVERSION
-            TOXIC_EXTRAVERSION := $(shell echo $(TOXIC_EXTRAVERSION) | sed 's/-//')
-            # Add leading dash to TOXIC_EXTRAVERSION
-            TOXIC_EXTRAVERSION := -$(TOXIC_EXTRAVERSION)
-        endif
-    endif
-else
-    # If TOXIC_BUILDTYPE is not defined, set to UNOFFICIAL
-    TOXIC_BUILDTYPE := UNOFFICIAL
-    TOXIC_EXTRAVERSION :=
-endif
-
-ifeq ($(TOXIC_BUILDTYPE), UNOFFICIAL)
-    ifneq ($(TARGET_UNOFFICIAL_BUILD_ID),)
-        TOXIC_EXTRAVERSION := -$(TARGET_UNOFFICIAL_BUILD_ID)
-    endif
-endif
-
-ifeq ($(TOXIC_BUILDTYPE), RELEASE)
-    ifndef TARGET_VENDOR_RELEASE_BUILD_ID
-        TOXIC_VERSION := $(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR).$(PRODUCT_VERSION_MAINTENANCE)$(PRODUCT_VERSION_DEVICE_SPECIFIC)-$(TOXIC_BUILD)
-    else
-        ifeq ($(TARGET_BUILD_VARIANT),user)
-            TOXIC_VERSION := $(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR)-$(TARGET_VENDOR_RELEASE_BUILD_ID)-$(TOXIC_BUILD)
-        else
-            TOXIC_VERSION := $(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR).$(PRODUCT_VERSION_MAINTENANCE)$(PRODUCT_VERSION_DEVICE_SPECIFIC)-$(TOXIC_BUILD)
-        endif
-    endif
-else
-    TOXIC_VERSION := $(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR)-$(shell date -u +%Y%m%d)-$(TOXIC_BUILDTYPE)$(TOXIC_EXTRAVERSION)-$(TOXIC_BUILD)
-endif
+TOXIC_BUILDTYPE ?= UNOFFICIAL
+TOXIC_VERSION := 1.0.1
+TOXIC_VERSION := Toxic-OS-MM-$(TOXIC_BUILDTYPE)-v$(TOXIC_VERSION)-$(TOXIC_BUILD)-$(shell date +%Y%m%d)
 
 PRODUCT_PROPERTY_OVERRIDES += \
   ro.toxic.version=$(TOXIC_VERSION) \
   ro.toxic.releasetype=$(TOXIC_BUILDTYPE) \
-  ro.modversion=$(TOXIC_VERSION) \
-  ro.cmlegal.url=https://cyngn.com/legal/privacy-policy
-
--include vendor/cm-priv/keys/keys.mk
+  ro.modversion=$(TOXIC_VERSION) 
 
 TOXIC_DISPLAY_VERSION := $(TOXIC_VERSION)
-
-ifneq ($(PRODUCT_DEFAULT_DEV_CERTIFICATE),)
-ifneq ($(PRODUCT_DEFAULT_DEV_CERTIFICATE),build/target/product/security/testkey)
-  ifneq ($(TOXIC_BUILDTYPE), UNOFFICIAL)
-    ifndef TARGET_VENDOR_RELEASE_BUILD_ID
-      ifneq ($(TOXIC_EXTRAVERSION),)
-        # Remove leading dash from TOXIC_EXTRAVERSION
-        TOXIC_EXTRAVERSION := $(shell echo $(TOXIC_EXTRAVERSION) | sed 's/-//')
-        TARGET_VENDOR_RELEASE_BUILD_ID := $(TOXIC_EXTRAVERSION)
-      else
-        TARGET_VENDOR_RELEASE_BUILD_ID := $(shell date -u +%Y%m%d)
-      endif
-    else
-      TARGET_VENDOR_RELEASE_BUILD_ID := $(TARGET_VENDOR_RELEASE_BUILD_ID)
-    endif
-    TOXIC_DISPLAY_VERSION=$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR)-$(TARGET_VENDOR_RELEASE_BUILD_ID)
-  endif
-endif
-endif
 
 PRODUCT_PROPERTY_OVERRIDES += \
   ro.toxic.display.version=$(TOXIC_DISPLAY_VERSION)
 
 -include $(WORKSPACE)/build_env/image-auto-bits.mk
-
-$(call prepend-product-if-exists, vendor/extra/product.mk)
